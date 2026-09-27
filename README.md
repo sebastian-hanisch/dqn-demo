@@ -1,5 +1,7 @@
 # 🧠 DQN / Funktionsapproximation
 
+**[→ Demo live ausprobieren](https://sebastianhanisch-dqn-demo.streamlit.app/)**
+
 Sechstes Stück der **Reinforcement-Learning-Linie** der "Konzepte"-Reihe im Portfolio von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning. Derselbe Lagerroboter wie bei [Q-Learning](https://github.com/sebastian-hanisch/q-learning-demo) (Stück 3). Statt einer Tabelle schätzt hier ein **kleines Netz** (in reinem numpy geschrieben, kein Framework) die Q-Werte aus der Position des Roboters. Dazu kommen zwei Tricks aus dem Original-DQN-Paper (Mnih et al. 2015): ein **Replay-Speicher** und ein **Zielnetz**.
 
 ## Kernfrage

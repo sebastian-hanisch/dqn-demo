@@ -193,10 +193,10 @@ st.markdown(
     """
 | Annahme | Was passiert, wenn sie verletzt ist | Wer setzt an |
 |---|---|---|
-| **Ein sorgfaeltig gewaehlter Optimierer** | Mit einem einfachen SGD-Schritt (statt Adam) ist das Training bei diesem Vehikel instabil bis hin zur Divergenz - die Rewards streuen um zwei Groessenordnungen (Schritt −1 gegen Klippe −100), rohes SGD ueberreagiert darauf (gemessen). Adams pro Parameter skalierte Schrittweite faengt das ab. | Reward-Clipping (wie im Original-DQN-Paper), Gradienten-Clipping |
-| **Genug Seeds fuer eine verlaessliche Rangfolge** | Bei diesem kleinen Netz und kurzen Budget schwankt das Ergebnis von Seed zu Seed staerker als der Unterschied zwischen den vier Kombinationen aus Replay/Zielnetz - einzelne Laeufe laufen sogar aktiv in die Klippe (gemessen, Experiment oben). Eine klare Rangfolge braucht deutlich mehr Seeds/Rechenzeit als hier vertretbar. | Mehr Seeds, groessere/stabilere Netze, Reward-Normalisierung |
-| **Reichhaltige Merkmale fuer echte Verallgemeinerung** | Mit nur (Zeile, Spalte) als Eingabe verallgemeinert das Netz nicht zuverlaessig besser als eine Tabelle auf nie besuchte Zellen (gemessen) - die scharfe Kante der Klippe ist aus zwei rohen Koordinaten schwer zu lernen. | Reichhaltigere Merkmale, mehr Kapazitaet/Training |
-| **Endliches, kleines Problem** | Bei einem sehr grossen oder stetigen Zustandsraum waere selbst eine Tabelle unmoeglich - das Netz bleibt dann die einzige Option, nicht nur eine Ergaenzung. | - |
+| **Ein sorgfältig gewählter Optimierer** | Mit einem einfachen SGD-Schritt (statt Adam) ist das Training bei diesem Vehikel instabil bis hin zur Divergenz - die Rewards streuen um zwei Größenordnungen (Schritt −1 gegen Klippe −100), rohes SGD überreagiert darauf (gemessen). Adams pro Parameter skalierte Schrittweite fängt das ab. | Reward-Clipping (wie im Original-DQN-Paper), Gradienten-Clipping |
+| **Genug Seeds für eine verlässliche Rangfolge** | Bei diesem kleinen Netz und kurzen Budget schwankt das Ergebnis von Seed zu Seed stärker als der Unterschied zwischen den vier Kombinationen aus Replay/Zielnetz - einzelne Läufe laufen sogar aktiv in die Klippe (gemessen, Experiment oben). Eine klare Rangfolge braucht deutlich mehr Seeds/Rechenzeit als hier vertretbar. | Mehr Seeds, größere/stabilere Netze, Reward-Normalisierung |
+| **Reichhaltige Merkmale für echte Verallgemeinerung** | Mit nur (Zeile, Spalte) als Eingabe verallgemeinert das Netz nicht zuverlässig besser als eine Tabelle auf nie besuchte Zellen (gemessen) - die scharfe Kante der Klippe ist aus zwei rohen Koordinaten schwer zu lernen. | Reichhaltigere Merkmale, mehr Kapazität/Training |
+| **Endliches, kleines Problem** | Bei einem sehr großen oder stetigen Zustandsraum wäre selbst eine Tabelle unmöglich - das Netz bleibt dann die einzige Option, nicht nur eine Ergänzung. | - |
 """
 )
 st.caption("Die Linie: Bandit → Value Iteration und Policy Iteration → Q-Learning → SARSA → Dyna-Q → **DQN / Funktionsapproximation** (dieses Stück) → Policy Gradient → Actor-Critic.")
@@ -208,11 +208,11 @@ with st.expander("📐 Mathematische Formulierung"):
         r"""
 **Das Netz:** $Q(s, \cdot; \theta) = W_2 \max(0, W_1 x(s) + b_1) + b_2$, wobei $x(s)$ die normierte Position ist. Mit `hidden=0`: $Q(s,\cdot;\theta) = W_1 x(s)$ (keine Aktivierung, kein Bias).
 
-**Verlust** (nur fuer die tatsaechlich gewaehlte Aktion): $\mathcal{L} = \tfrac12 (Q(s,a;\theta) - y)^2$, $y = r + \gamma \max_{a'} Q(s',a'; \theta^-)$ ($\theta^-$ = Zielnetz-Gewichte, oder $\theta$ selbst ohne Zielnetz).
+**Verlust** (nur für die tatsächlich gewählte Aktion): $\mathcal{L} = \tfrac12 (Q(s,a;\theta) - y)^2$, $y = r + \gamma \max_{a'} Q(s',a'; \theta^-)$ ($\theta^-$ = Zielnetz-Gewichte, oder $\theta$ selbst ohne Zielnetz).
 
 **Adam-Update** (Kingma & Ba 2015): $m_t = \beta_1 m_{t-1} + (1-\beta_1) g_t$, $v_t = \beta_2 v_{t-1} + (1-\beta_2) g_t^2$, $\theta \leftarrow \theta - \alpha\, \hat m_t / (\sqrt{\hat v_t} + \epsilon)$ mit bias-korrigierten $\hat m_t, \hat v_t$.
 
-**Reduktion:** mit `hidden=0`, One-Hot-Eingabe $x(s) = e_s$, dem einfachen SGD-Schritt $\theta \leftarrow \theta - \alpha g$, Batchgroesse 1, ohne Replay und ohne Zielnetz gilt $W_1[s,a] \leftarrow W_1[s,a] + \alpha(y - Q(s,a))$ - exakt die Q-Learning-Regel.
+**Reduktion:** mit `hidden=0`, One-Hot-Eingabe $x(s) = e_s$, dem einfachen SGD-Schritt $\theta \leftarrow \theta - \alpha g$, Batchgröße 1, ohne Replay und ohne Zielnetz gilt $W_1[s,a] \leftarrow W_1[s,a] + \alpha(y - Q(s,a))$ - exakt die Q-Learning-Regel.
 
 Implementiert in `dqn_grid.py` (Vehikel), `dqn_net.py` (das Netz, SGD und Adam), `dqn_agent.py` (Replay, Zielnetz, Trainingsschleife), `dqn_reference.py` (Value Iteration, nur zur Gegenprobe), `dqn_evaluation.py` (Analyse, Ablations-Experiment).
         """
@@ -221,6 +221,6 @@ Implementiert in `dqn_grid.py` (Vehikel), `dqn_net.py` (das Netz, SGD und Adam),
 st.markdown("---")
 st.caption(
     "Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – "
-    "Operations Research und Machine Learning. Interesse an einer maßgeschneiderten Lösung für "
-    "Ihr Unternehmen? [Kontakt aufnehmen](https://sebastianhanisch.net/kontakt.html)"
+    "Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). "
+    "Mehr zur Reihe: [Reinforcement Learning: Bandit bis Actor-Critic](https://sebastianhanisch.net/konzepte-reinforcement-learning.html)."
 )

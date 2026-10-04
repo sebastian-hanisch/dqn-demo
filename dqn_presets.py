@@ -118,8 +118,8 @@ def apply_preset(name):
 PRESET_HELP = {
     "Standardfall": "Replay UND Zielnetz aktiv - das Standardbeispiel dieser Demo. Ob die beiden Tricks in EINEM einzelnen Lauf wirklich helfen, ist stochastisch (siehe Experiment unten für den Mittelwert über mehrere Seeds).",
     "Ohne Replay": "Nur die jeweils letzte Erfahrung wird trainiert, kein Mischen mit vergangenen Übergängen - einer der beiden Stabilitäts-Tricks aus Mnih et al. (2015) fehlt.",
-    "Ohne Zielnetz": "Der Bootstrap-Wert kommt aus dem sich staendig aendernden Online-Netz selbst - ein bewegliches Ziel, das die Konvergenz erschwert.",
-    "Ohne beides": "Die urspruengliche Variante ohne beide Tricks aus Mnih et al. (2015).",
+    "Ohne Zielnetz": "Der Bootstrap-Wert kommt aus dem sich ständig ändernden Online-Netz selbst - ein bewegliches Ziel, das die Konvergenz erschwert.",
+    "Ohne beides": "Die ursprüngliche Variante ohne beide Tricks aus Mnih et al. (2015).",
     "Länger trainiert": "200 Episoden statt der Standardanzahl - mehr Trainingszeit, aber kein garantiert besseres Ergebnis (siehe Experiment unten: die Streuung zwischen Zufalls-Seeds bleibt groß).",
-    "Größeres Netz": "64 statt 32 versteckte Einheiten - mehr Kapazitaet allein macht das Training nicht automatisch stabiler (siehe Grenzen-Tabelle).",
+    "Größeres Netz": "64 statt 32 versteckte Einheiten - mehr Kapazität allein macht das Training nicht automatisch stabiler (siehe Grenzen-Tabelle).",
 }

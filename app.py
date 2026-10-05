@@ -12,7 +12,7 @@ import numpy as np
 import streamlit as st
 
 import dqn_constants as C
-from dqn_evaluation import Settings, ablation_experiment, analyse, analyse_tabular_baseline
+from dqn_evaluation import Settings, ablation_experiment, analyse, analyse_tabular_baseline, never_ending_gap
 from dqn_presets import PRESET_HELP, PRESETS, apply_preset, bounds, init_session_state_defaults, load_permalink_settings, sync_query_params
 from dqn_visualization import build_ablation, build_grid, build_learning_curve
 
@@ -147,7 +147,7 @@ tricks_on = settings.use_replay and settings.use_target
 if a.gap <= C.NEAR_OPTIMAL_GAP:
     st.success(f"✅ Das Netz erreicht bei {settings.episodes} Episoden einen kleinen Wert-Abstand ({de(a.gap,2)}) - " + ("mit beiden Tricks aktiv." if tricks_on else "**auch ohne** beide Tricks - probieren Sie einen anderen Seed oder das Experiment unten, der Unterschied zwischen den Kombinationen ist bei diesem kleinen Netz stark vom Zufall abhängig."))
 else:
-    st.warning(f"⚠️ Das Netz liegt bei diesem Setting noch spürbar daneben (Abstand {de(a.gap,2)}) - " + ("das kann trotz beider aktiver Tricks passieren: bei diesem kleinen Netz ist das Ergebnis stark seed-abhängig, siehe Experiment unten für die Streuung über mehrere Seeds." if tricks_on else "ohne beide Tricks ist das häufiger der Fall, aber kein Naturgesetz (siehe Experiment unten)."))
+    st.warning(f"⚠️ Das Netz liegt bei diesem Setting noch spürbar daneben (Abstand {de(a.gap,2)}) - " + ("das kann trotz beider aktiver Tricks passieren: bei diesem kleinen Netz ist das Ergebnis stark seed-abhängig, siehe Experiment unten für die Streuung über mehrere Seeds." if tricks_on else "die Ablation unten zeigt dabei keine saubere Rangfolge zwischen den vier Kombinationen aus Replay-Speicher und Zielnetz - das Ergebnis hängt stark vom Seed ab."))
 g1, g2 = st.columns(2)
 with g1:
     st.markdown("##### Netz: gelernte Policy")
@@ -172,13 +172,15 @@ if st.session_state.get("ablation_on"):
         ae = _ablation_exp(Settings())
     st.plotly_chart(build_ablation(ae), width="stretch", key="ablation_chart")
     rows_by_combo = {(r["use_replay"], r["use_target"]): r for r in ae["rows"]}
-    ceiling = 1.0 / (1.0 - Settings().gamma)
+    base_s = Settings()
+    ceiling = never_ending_gap(base_s.rows, base_s.cols, base_s.slip, base_s.gamma)
     worst_mean = max(row[ep]["mean"] for row in ae["rows"] for ep in ae["checkpoints"])
+    worst_single = max(row[ep]["max"] for row in ae["rows"] for ep in ae["checkpoints"])
     st.warning(
         f"**Befund (ehrlich, nicht die erhoffte Lehrbuch-Kurve):** über alle vier Kombinationen und {ae['checkpoints']} Trainingsepisoden hinweg trennen sich "
         "Replay-Speicher und Zielnetz **nicht** sauber oder monoton voneinander - die Fehlerbalken (Standardfehler über die Seeds) überlappen meist stark. "
-        f"Zum Vergleich: eine gierige Politik, die nie ans Ziel kommt (im sicheren Innenraum umherirrt), hat immer exakt den Wert-Abstand ≈{de(ceiling,1)} "
-        f"(siehe Konstanten-Kommentar); einzelne Zufalls-Seeds schneiden hier sogar **schlechter** ab ({de(worst_mean,1)}) - sie laufen aktiv in die Klippe. "
+        f"Zum Vergleich: eine gierige Politik, die nie ans Ziel kommt und die Klippe nie berührt (z. B. dauerhaft gegen die Westwand), hat den Wert −{de(1.0 / (1.0 - base_s.gamma),1)} "
+        f"und damit bei diesen Einstellungen den Wert-Abstand ≈{de(ceiling,1)} (siehe Konstanten-Kommentar). Schlechter als das schneiden hier manche Läufe ab: der Mittelwert über die Seeds erreicht bis {de(worst_mean,1)}, einzelne Zufalls-Seeds bis {de(worst_single,1)} - sie laufen aktiv in die Klippe. "
         "**Das ist selbst der Befund:** bei einem so kleinen, von Hand geschriebenen Netz und kurzem Trainingsbudget schlägt die Varianz zwischen "
         "Zufalls-Seeds den Effekt der beiden Stabilitäts-Tricks - ein reales, in der Praxis bekanntes DQN-Problem (hohe Seed-Varianz), keine "
         "verlässliche Rangfolge \"Replay schlägt Zielnetz\" oder umgekehrt."

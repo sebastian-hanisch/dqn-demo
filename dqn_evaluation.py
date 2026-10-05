@@ -106,10 +106,17 @@ def _gap_for(rows, cols, slip, gamma, hidden, lr, epsilon_start, epsilon_decay, 
     return float(V_star[start_s] - V_pi[start_s])
 
 
+def never_ending_gap(rows, cols, slip, gamma):
+    """Wert-Abstand V*(Start) - V(Start) einer Politik, die nie endet und die Klippe nie berührt: ihr Wert ist -1/(1-gamma) (Schritt-Reward -1 ohne Ende),
+    der Abstand also V*(Start) + 1/(1-gamma) - nicht schlicht 1/(1-gamma), denn V*(Start) ist bei Rutschen deutlich kleiner als null."""
+    grid, _, _, V_star, _, _ = _reference(rows, cols, slip, gamma)
+    return float(V_star[grid.state_of(grid.start)] + 1.0 / (1.0 - gamma))
+
+
 def _summary(gaps):
     gaps = np.asarray(gaps, dtype=float)
     se = float(gaps.std(ddof=1) / np.sqrt(len(gaps))) if len(gaps) > 1 else 0.0
-    return {"mean": float(gaps.mean()), "se": se, "frac_near_optimal": float(np.mean(gaps < C.NEAR_OPTIMAL_GAP))}
+    return {"mean": float(gaps.mean()), "se": se, "max": float(gaps.max()), "frac_near_optimal": float(np.mean(gaps < C.NEAR_OPTIMAL_GAP))}
 
 
 # --- Experiment: Ablation von Replay und Zielnetz ueber die Trainingsdauer -----------------------------------------------------------------------

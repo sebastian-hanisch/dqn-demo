@@ -17,6 +17,7 @@ def test_standard_case_core_question():
     assert baseline.gap == pytest.approx(0.68, abs=0.5)
     assert a.env_steps == pytest.approx(10_924, abs=50)
     assert baseline.env_steps == pytest.approx(4_353, abs=50)
+    assert E.never_ending_gap(s.rows, s.cols, s.slip, s.gamma) == pytest.approx(10.77, abs=0.05)  # der Netz-Lauf kommt nie ans Ziel: genau dieser Abstand
 
 
 def test_never_terminating_policy_ceiling_without_slip():
@@ -45,6 +46,9 @@ def test_ablation_experiment_shows_no_clean_ranking():
     for combo, checkpoints in expected.items():
         for ep, value in checkpoints.items():
             assert rows[combo][ep]["mean"] == pytest.approx(value, abs=1.0)
+    # README: einzelne Seeds bis 109,8 (der Mittelwert 38,7 verdeckt sie)
+    assert rows[(True, False)][130]["max"] == pytest.approx(109.8, abs=3.0)
+    assert max(rows[c][ep]["max"] for c in rows for ep in exp["checkpoints"]) == pytest.approx(109.8, abs=3.0)
     # Der Befund selbst: es gibt keine Kombination, die an JEDEM Checkpoint die beste ist (keine saubere Rangfolge).
     winners = {min(rows, key=lambda c: rows[c][ep]["mean"]) for ep in exp["checkpoints"]}
     assert len(winners) > 1

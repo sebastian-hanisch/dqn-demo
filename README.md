@@ -65,10 +65,10 @@ Sechstes Stück der **Reinforcement-Learning-Linie** der "Konzepte"-Reihe im Por
 
 ## Bewusst nicht umgesetzt
 
-- **Ein größeres Raster für eine "Tabelle-vs-Netz"-Verallgemeinerungs-Story** – gemessen: mit nur (Zeile, Spalte) als Merkmalen verallgemeinert das Netz nicht zuverlässig besser als eine Tabelle auf ungesehene Zellen; das größere Raster hätte nur Rechenzeit gekostet, ohne einen tragfähigen Befund.
+- **Ein größeres Raster für eine "Tabelle-vs-Netz"-Verallgemeinerungs-Story** – gemessen: mit nur (Zeile, Spalte) als Merkmalen verallgemeinert das Netz nicht zuverlässig besser als eine Tabelle auf ungesehene Zellen; das größere Raster hätte nur Rechenzeit gekostet, ohne einen belastbaren Befund.
 - **Reward-Clipping / Gradienten-Clipping** – hätte die Ablation vermutlich stabiler gemacht, ist aber ein eigener zusätzlicher Trick jenseits der beiden namensgebenden (Replay, Zielnetz) aus Mnih et al. (2015).
 - **Deutlich mehr Seeds für eine saubere Ablations-Rangfolge** – der naheliegende nächste Schritt, aber bei diesem kleinen, von Hand trainierten Netz mit vertretbarem Rechenaufwand nicht erreichbar (siehe Grenzen-Tabelle).
-- **Double DQN** (van Hasselt, Guez & Silver 2016) – ursprünglich als zusätzliches Experiment geplant (getrenntes Netz wählt die Aktion, das Zielnetz bewertet sie, senkt die Überschätzung von $Q$). Der Kernumfang dieses Stücks (Netz, Adam-Optimierer, Replay, Zielnetz, die Fehlersuche oben) hat den erwarteten Aufwand bereits deutlich überschritten; ein weiteres Experiment auf einer ohnehin schon verrauschten Ablation hätte keinen tragfähigen zusätzlichen Befund versprochen.
+- **Double DQN** (van Hasselt, Guez & Silver 2016) – ursprünglich als zusätzliches Experiment geplant (getrenntes Netz wählt die Aktion, das Zielnetz bewertet sie, senkt die Überschätzung von $Q$). Der Kernumfang dieses Stücks (Netz, Adam-Optimierer, Replay, Zielnetz, die Fehlersuche oben) hat den erwarteten Aufwand bereits deutlich überschritten; ein weiteres Experiment auf einer ohnehin schon verrauschten Ablation hätte keinen belastbaren zusätzlichen Befund versprochen.
 
 ## Lokal ausführen
 
